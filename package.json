@@ -1,0 +1,36 @@
+{
+    "name": "interview-prep-ai",
+    "version": "1.0.0",
+    "description": "Adaptive mock interview coaching system",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "build": "tsc",
+        "dev": "ts-node src/index.ts",
+        "start": "npx ts-node server.ts",
+        "demo": "npx ts-node examples/complete-demo.ts"
+    },
+    "keywords": [
+        "interview",
+        "ai",
+        "coaching"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/jest": "^29.5.0",
+        "@types/node": "^20.0.0",
+        "@types/uuid": "^10.0.0",
+        "fast-check": "^3.15.0",
+        "jest": "^29.5.0",
+        "ts-jest": "^29.1.0",
+        "ts-node": "^10.9.0",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@types/express": "^5.0.5",
+        "express": "^5.1.0",
+        "uuid": "^13.0.0"
+    }
+}
