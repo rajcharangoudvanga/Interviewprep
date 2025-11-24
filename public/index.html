@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewPrepAI - Mock Interview Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .mode-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        select,
+        textarea,
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus,
+        textarea:focus,
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .question-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .feedback-section {
+            margin-top: 20px;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-card h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .score-card p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .feedback-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .feedback-item h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .strength {
+            border-left: 4px solid #4caf50;
+        }
+
+        .improvement {
+            border-left: 4px solid #ff9800;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-secondary {
+            background: #6c757d;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .behavior-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .behavior-standard {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .behavior-confused {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .behavior-efficient {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .behavior-chatty {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .behavior-edge-case {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 InterviewPrepAI</h1>
+            <p>Practice mock interviews with AI-powered feedback</p>
+            <div class="mode-toggle">
+                <a href="index.html" class="mode-btn active">💬 Text Mode</a>
+                <a href="index-voice.html" class="mode-btn">🎤 Voice Mode</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Step 1: Setup -->
+            <div id="step-setup" class="step active">
+                <h2>Let's Get Started</h2>
+                <p style="margin-bottom: 20px; color: #666;">Choose your target role and experience level</p>
+
+                <div class="form-group">
+                    <label for="role">Job Role</label>
+                    <select id="role">
+                        <option value="">Loading roles...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="level">Experience Level</label>
+                    <select id="level">
+                        <option value="">Loading levels...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="resume">Resume (Optional)</label>
+                    <textarea id="resume" placeholder="Paste your resume here for personalized questions..."></textarea>
+                </div>
+
+                <button onclick="startInterview()">Start Interview</button>
+            </div>
+
+            <!-- Step 2: Interview -->
+            <div id="step-interview" class="step">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div id="progress-text" class="progress-text">Question 0 of 0</div>
+
+                <div class="question-box">
+                    <span id="question-type" class="question-type">Technical</span>
+                    <h3 id="question-text" style="margin-top: 10px;">Loading question...</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="response">Your Response</label>
+                    <textarea id="response" placeholder="Type your answer here..."></textarea>
+                </div>
+
+                <div id="behavior-indicator"></div>
+
+                <div class="button-group">
+                    <button onclick="submitResponse()">Submit Answer</button>
+                    <button class="button-secondary" onclick="endEarly()">End Interview</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Feedback -->
+            <div id="step-feedback" class="step">
+                <h2>Interview Complete! 🎉</h2>
+
+                <div class="score-card">
+                    <h2 id="overall-grade">A</h2>
+                    <p id="overall-score">85/100</p>
+                </div>
+
+                <div class="feedback-section">
+                    <h3>Strengths</h3>
+                    <div id="strengths-list"></div>
+
+                    <h3 style="margin-top: 30px;">Areas for Improvement</h3>
+                    <div id="improvements-list"></div>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="startOver()">Start New Interview</button>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="step-loading" class="step">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Processing...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

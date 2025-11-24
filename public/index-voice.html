@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewPrepAI - Voice Interview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .voice-controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .mic-button.recording {
+            background: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .voice-status {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #666;
+            min-height: 30px;
+        }
+
+        .transcript {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            min-height: 100px;
+            border-left: 4px solid #667eea;
+        }
+
+        .transcript.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .question-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .speaker-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .speaker-icon:hover {
+            background: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .speaker-icon.speaking {
+            animation: pulse 1s infinite;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 InterviewPrepAI</h1>
+            <p>Voice-Enabled Mock Interview Practice</p>
+            <div class="mode-toggle">
+                <button class="mode-btn" onclick="window.location.href='index.html'">💬 Text Mode</button>
+                <button class="mode-btn active">🎤 Voice Mode</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Step 1: Setup -->
+            <div id="step-setup" class="step active">
+                <h2>Voice Interview Setup</h2>
+
+                <div class="info-box">
+                    <strong>🎤 Voice Mode Features:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Speak your answers naturally</li>
+                        <li>Hear questions read aloud</li>
+                        <li>Real-time speech recognition</li>
+                        <li>Automatic transcription</li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Job Role</label>
+                    <select id="role">
+                        <option value="">Loading roles...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="level">Experience Level</label>
+                    <select id="level">
+                        <option value="">Loading levels...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="resume">Resume (Optional)</label>
+                    <textarea id="resume" placeholder="Paste your resume here for personalized questions..."></textarea>
+                </div>
+
+                <button onclick="startInterview()">Start Voice Interview</button>
+            </div>
+
+            <!-- Step 2: Interview -->
+            <div id="step-interview" class="step">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div id="progress-text" style="text-align: center; color: #666; margin-bottom: 20px;">Question 0 of 0
+                </div>
+
+                <div class="question-box">
+                    <h3 id="question-text">Loading question...</h3>
+                    <span id="speaker-icon" class="speaker-icon" onclick="speakQuestion()"
+                        title="Click to hear question">🔊</span>
+                </div>
+
+                <div class="voice-controls">
+                    <button id="mic-button" class="mic-button" onclick="toggleRecording()">
+                        🎤
+                    </button>
+                    <div id="voice-status" class="voice-status">Click the microphone to start speaking</div>
+                </div>
+
+                <div id="transcript" class="transcript empty">
+                    Your response will appear here as you speak...
+                </div>
+
+                <div class="button-group">
+                    <button onclick="submitResponse()">Submit Answer</button>
+                    <button onclick="clearTranscript()" style="background: #6c757d;">Clear</button>
+                    <button onclick="endEarly()" style="background: #dc3545;">End Interview</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Feedback -->
+            <div id="step-feedback" class="step">
+                <h2>Interview Complete! 🎉</h2>
+                <div id="feedback-content"></div>
+                <button onclick="startOver()">Start New Interview</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app-voice.js"></script>
+</body>
+
+</html>
